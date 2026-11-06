@@ -1,0 +1,21 @@
+﻿recurso_id,descripcion,precio_mxn,capacidad_o_stock,habilitado
+ENV-P001,Carga local 01,267,13,1
+ENV-P002,Carga foránea 02,338,16,1
+ENV-P003,Entrega express 03,409,19,1
+ENV-P004,Carga refrigerada 04,480,22,1
+ENV-P005,Carga local 05,551,25,1
+ENV-P006,Carga foránea 06,622,28,1
+ENV-P007,Entrega express 07,693,31,1
+ENV-P008,Carga refrigerada 08,764,34,1
+ENV-P009,Carga local 09,835,37,1
+ENV-P010,Carga foránea 10,906,40,1
+ENV-P011,Entrega express 11,977,43,0
+ENV-P012,Carga refrigerada 12,1048,46,1
+ENV-P013,Carga local 13,1119,49,1
+ENV-P014,Carga foránea 14,1190,52,1
+ENV-P015,Entrega express 15,1261,10,1
+ENV-P016,Carga refrigerada 16,1332,13,1
+ENV-P017,Carga local 17,1403,16,1
+ENV-P018,Carga foránea 18,1474,19,1
+ENV-P019,Entrega express 19,1545,22,1
+ENV-P020,Carga refrigerada 20,1616,25,1

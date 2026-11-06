@@ -1,0 +1,21 @@
+﻿caso_id,operacion_id,accion_sugerida,estado_inicial,resultado_alumno,instrucciones
+ENV-S001,ENV-O001,completar,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S002,ENV-O002,cancelar,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S003,ENV-O003,repetir_aprobacion,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S004,ENV-O004,saltar_estado,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S005,ENV-O005,aprobar,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S006,ENV-O006,completar,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S007,ENV-O007,cancelar,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S008,ENV-O008,repetir_aprobacion,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S009,ENV-O009,saltar_estado,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S010,ENV-O010,aprobar,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S011,ENV-O011,completar,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S012,ENV-O012,cancelar,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S013,ENV-O013,repetir_aprobacion,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S014,ENV-O014,saltar_estado,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S015,ENV-O015,aprobar,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S016,ENV-O016,completar,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S017,ENV-O017,cancelar,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S018,ENV-O018,repetir_aprobacion,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S019,ENV-O019,saltar_estado,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+ENV-S020,ENV-O020,aprobar,REGISTRADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
