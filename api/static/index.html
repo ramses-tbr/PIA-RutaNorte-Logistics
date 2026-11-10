@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RutaNorte Logistics · Centro de operaciones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F1F2EC; --surface:#FFFFFF; --ink:#14231D; --muted:#56655D;
+  --line:#D6DBD2; --line-strong:#B7C0B4;
+  --header:#0A6A4B; --green:#0A6A4B; --green-ink:#07503A; --green-soft:#DCEBE2; --on-green:#FFFFFF;
+  --amber:#F2B50F; --amber-soft:#FBEFC4;
+  --red:#A8261D; --red-soft:#F7DCD8;
+  --radius:6px;
+  --display:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#0E1512; --surface:#16201B; --ink:#E6EEE8; --muted:#9BAAA1;
+    --line:#26332C; --line-strong:#3A4A41;
+    --header:#0F2A20; --green:#4CC29A; --green-ink:#7ADBB7; --green-soft:#183326; --on-green:#06130D;
+    --amber-soft:#3A2F0A; --red:#FF8A80; --red-soft:#3A1B18;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 15px/1.5 var(--body)}
+h1,h2,h3{font-family:var(--display);margin:0;letter-spacing:.01em}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px;box-shadow:0 0 0 5px var(--amber)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- encabezado ---------- */
+.cabecera{background:var(--header);color:#fff;border-bottom:4px solid var(--amber)}
+.cabecera-in{max-width:1320px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.marca{font:700 26px/1 var(--display);letter-spacing:.02em;margin-right:auto}
+.marca small{display:block;font:500 13px/1.3 var(--body);letter-spacing:0;opacity:.85;margin-top:3px}
+.pestanas{display:flex;gap:4px}
+.pestana{background:transparent;border:0;color:#fff;padding:9px 14px;border-radius:var(--radius);cursor:pointer;font-weight:500;opacity:.85}
+.pestana:hover{opacity:1;background:rgba(255,255,255,.12)}
+.pestana[aria-selected="true"]{opacity:1;background:#fff;color:#0A4A35}
+.cabecera :focus-visible{outline-color:#fff}
+
+main{max-width:1320px;margin:0 auto;padding:20px 16px 64px}
+section[hidden]{display:none}
+
+/* ---------- controles ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1.5px solid var(--green);background:var(--green);color:var(--on-green);
+  padding:8px 14px;border-radius:var(--radius);cursor:pointer;font-weight:600;line-height:1.2}
+.btn:hover{filter:brightness(1.08)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn.sec{background:transparent;color:var(--green-ink)}
+.btn.peligro{background:transparent;border-color:var(--red);color:var(--red)}
+.btn.chico{padding:5px 10px;font-size:13px}
+label{display:block;font-weight:500;font-size:14px;margin-bottom:4px}
+.campo{margin-bottom:14px}
+.ayuda{font-size:13px;color:var(--muted);margin:4px 0 0}
+input[type=text],input[type=number],input[type=search],select,textarea{width:100%;background:var(--surface);border:1.5px solid var(--line-strong);
+  border-radius:var(--radius);padding:8px 10px}
+textarea{min-height:70px;resize:vertical}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--green);margin:0 8px 0 0;vertical-align:-3px}
+.check{display:flex;align-items:center;font-weight:400;margin:0 0 8px}
+
+/* ---------- distintivos ---------- */
+.badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12.5px;font-weight:600;white-space:nowrap;background:var(--line);color:var(--ink)}
+.badge[data-g="proceso"]{background:var(--green-soft);color:var(--green-ink)}
+.badge[data-g="entregada"]{background:var(--green);color:var(--on-green)}
+.badge[data-g="devolucion"]{background:var(--amber-soft);color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--amber)}
+.badge[data-g="mala"]{background:var(--red-soft);color:var(--red)}
+.tag-alto{display:inline-block;background:var(--amber);color:#14231D;padding:1px 8px;border-radius:3px;font-size:12px;font-weight:700}
+
+/* ---------- órdenes ---------- */
+.ordenes{display:grid;grid-template-columns:minmax(330px,430px) 1fr;gap:20px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+.lista-cab{padding:14px;border-bottom:1px solid var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{border:1.5px solid var(--line-strong);background:transparent;border-radius:99px;padding:2px 10px;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.chip b{font-weight:600;margin-left:4px}
+.lista{list-style:none;margin:0;padding:0;max-height:calc(100vh - 250px);min-height:200px;overflow:auto}
+.fila{display:grid;grid-template-columns:1fr auto;gap:2px 10px;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--line);
+  padding:10px 14px;cursor:pointer;border-left:4px solid transparent}
+.fila:hover{background:var(--paper)}
+.fila[aria-current="true"]{background:var(--green-soft);border-left-color:var(--green)}
+.fila-id{font:600 17px/1.2 var(--display);letter-spacing:.02em}
+.fila-sub{font-size:13px;color:var(--muted);grid-column:1}
+.fila-der{grid-column:2;grid-row:1/3;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.fila-valor{font-size:13px;color:var(--muted)}
+.estado-vacio{padding:28px 18px;color:var(--muted);text-align:center}
+
+.detalle{min-height:300px}
+.det-cab{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:16px 20px;border-bottom:1px solid var(--line)}
+.det-cab h2{font-size:28px;margin-right:4px}
+.det-cerrar{display:none;margin-left:auto}
+.det-cuerpo{padding:4px 20px 24px}
+.bloque{padding:18px 0;border-bottom:1px solid var(--line)}
+.bloque:last-child{border-bottom:0}
+.bloque h3{font-size:18px;margin-bottom:10px}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px 20px;margin:0}
+.meta dt{font-size:13px;color:var(--muted)}
+.meta dd{margin:0;font-weight:500;overflow-wrap:anywhere}
+
+/* ruta de la orden: el elemento principal */
+.ruta{display:flex;list-style:none;margin:6px 0 0;padding:0}
+.ruta li{flex:1;position:relative;text-align:center;font-size:12.5px;line-height:1.25;padding:36px 2px 0;color:var(--muted)}
+.ruta li::before{content:"";position:absolute;top:14px;left:-50%;width:100%;height:4px;background:var(--line)}
+.ruta li:first-child::before{display:none}
+.nodo{position:absolute;top:4px;left:50%;transform:translateX(-50%);width:24px;height:24px;border-radius:50%;background:var(--surface);
+  border:3px solid var(--line-strong);display:grid;place-items:center;z-index:1;color:var(--ink)}
+.ruta li.hecho{color:var(--ink)}
+.ruta li.hecho::before,.ruta li.actual::before{background:var(--green)}
+.ruta li.hecho .nodo{background:var(--green);border-color:var(--green)}
+.ruta li.actual{color:var(--ink);font-weight:600}
+.ruta li.actual .nodo{width:32px;height:32px;top:0;background:var(--amber);border-color:var(--ink)}
+.ruta li.actual::before{top:14px}
+.ruta li.fuera .nodo{border-style:dashed}
+.ruta svg{width:18px;height:18px}
+.aviso{margin:0 0 12px;padding:9px 12px;border-radius:var(--radius);background:var(--amber-soft);box-shadow:inset 4px 0 0 var(--amber);font-size:14px}
+.aviso.mal{background:var(--red-soft);box-shadow:inset 4px 0 0 var(--red)}
+
+.acciones{display:flex;flex-wrap:wrap;gap:8px}
+details.plegable{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:8px;background:var(--surface)}
+details.plegable>summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.plegable>summary::-webkit-details-marker{display:none}
+details.plegable>summary::after{content:"+";font-size:20px;line-height:1;color:var(--muted)}
+details.plegable[open]>summary::after{content:"–"}
+details.plegable form{padding:2px 14px 14px}
+.fila-form{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:13px;background:var(--surface);position:sticky;top:0}
+td.d,th.d{text-align:right}
+.registro{list-style:none;margin:0;padding:0}
+.registro li{padding:7px 0;border-bottom:1px dashed var(--line)}
+.registro li:last-child{border-bottom:0}
+.sub{color:var(--muted);font-size:13px}
+
+/* ---------- formulario nueva orden ---------- */
+.formulario{max-width:760px}
+.formulario .panel{padding:22px}
+.formulario h2,.reporte h2{font-size:26px;margin-bottom:4px}
+.intro{color:var(--muted);margin:0 0 18px;max-width:62ch}
+.grupo{border:0;padding:0;margin:0 0 6px}
+.grupo legend{font:600 18px var(--display);padding:0;margin-bottom:10px}
+.error-form{margin:0 0 14px}
+
+/* ---------- reporte ---------- */
+.reporte{display:grid;gap:20px}
+.rep-cab{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.rep-cab .btn{margin-left:auto}
+.tabla-scroll{max-height:440px;overflow:auto}
+.barra{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.barra i{display:block;width:70px;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.barra i b{display:block;height:100%;background:var(--green)}
+
+/* ---------- avisos emergentes ---------- */
+#avisos{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:grid;gap:8px;z-index:60;width:min(560px,calc(100vw - 24px))}
+.aviso-flot{display:flex;gap:10px;align-items:flex-start;padding:11px 14px;border-radius:var(--radius);background:var(--ink);color:var(--surface);
+  box-shadow:0 6px 20px rgba(0,0,0,.25);animation:entra .18s ease-out}
+.aviso-flot.mal{background:var(--red);color:#fff}
+@media (prefers-color-scheme: dark){.aviso-flot.mal{color:#1c0705}}
+.aviso-flot button{margin-left:auto;background:transparent;border:0;color:inherit;cursor:pointer;font-size:18px;line-height:1;padding:0 2px}
+@keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.aviso-flot{animation:none}}
+
+/* ---------- pantallas angostas ---------- */
+@media (max-width:959px){
+  .ordenes{grid-template-columns:1fr}
+  .lista{max-height:none}
+  .detalle{position:fixed;inset:0;z-index:40;overflow:auto;border-radius:0;display:none}
+  .detalle.abierto{display:block}
+  .det-cerrar{display:inline-flex}
+  .det-cab{position:sticky;top:0;background:var(--surface);z-index:2}
+}
+@media (max-width:640px){
+  .marca{width:100%}
+  .pestanas{width:100%}
+  .pestana{flex:1;padding:9px 6px}
+  .fila-form{grid-template-columns:1fr}
+  .ruta{flex-direction:column}
+  .ruta li{text-align:left;padding:0 0 18px 42px;line-height:22px;font-size:14px}
+  .ruta li:last-child{padding-bottom:0}
+  .ruta li::before{left:13px;width:4px;top:-30px;height:41px}
+  .ruta li.actual::before{top:-30px}
+  .nodo{left:0;top:0;transform:none}
+  .ruta li.actual .nodo{left:-4px;top:-4px}
+  .formulario .panel{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<header class="cabecera">
+  <div class="cabecera-in">
+    <h1 class="marca">RutaNorte Logistics<small>Centro de operaciones</small></h1>
+    <nav class="pestanas" role="tablist" aria-label="Secciones">
+      <button class="pestana" role="tab" id="t-ordenes" aria-controls="v-ordenes" aria-selected="true" data-vista="ordenes">Órdenes</button>
+      <button class="pestana" role="tab" id="t-nueva" aria-controls="v-nueva" aria-selected="false" data-vista="nueva">Nueva orden</button>
+      <button class="pestana" role="tab" id="t-reporte" aria-controls="v-reporte" aria-selected="false" data-vista="reporte">Reporte</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ===== Órdenes ===== -->
+  <section id="v-ordenes" role="tabpanel" aria-labelledby="t-ordenes">
+    <div class="ordenes">
+      <div class="panel">
+        <div class="lista-cab">
+          <label for="buscar" class="sr">Buscar orden</label>
+          <input id="buscar" type="search" placeholder="Buscar por orden, cliente, operador o destino" autocomplete="off">
+          <div class="chips" id="chips" role="group" aria-label="Filtrar por fase"></div>
+        </div>
+        <ul class="lista" id="lista" aria-live="polite"></ul>
+      </div>
+
+      <div class="panel detalle" id="detalle" aria-label="Detalle de la orden">
+        <div id="detalle-vacio" class="estado-vacio">
+          <h2 style="font-size:22px;margin-bottom:6px">Elige una orden</h2>
+          <p style="margin:0">Selecciona una orden de la lista para ver su ruta, avanzarla de fase o reportar un incidente.</p>
+        </div>
+        <div id="detalle-contenido" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Nueva orden ===== -->
+  <section id="v-nueva" role="tabpanel" aria-labelledby="t-nueva" hidden>
+    <div class="formulario">
+      <div class="panel">
+        <h2>Registrar una orden</h2>
+        <p class="intro">La orden entra en la fase Registrado. El sistema revisa que la cotización siga vigente y que el operador esté disponible y haya aceptado la ruta.</p>
+        <form id="form-nueva" novalidate>
+          <div class="error-form aviso mal" id="nueva-error" role="alert" hidden></div>
+
+          <fieldset class="grupo">
+            <legend>Carga</legend>
+            <div class="fila-form">
+              <div class="campo">
+                <label for="n-id">ID de la orden</label>
+                <input id="n-id" type="text" autocomplete="off" placeholder="ENV-O061">
+              </div>
+              <div class="campo">
+                <label for="n-valor">Valor declarado (MXN)</label>
+                <input id="n-valor" type="text" inputmode="decimal" autocomplete="off" placeholder="25000">
+                <p class="ayuda" id="n-valor-ayuda">Una carga de más de $100,000 necesita segunda firma para entregarse.</p>
+              </div>
+            </div>
+            <div class="campo">
+              <label for="n-dir">Destino</label>
+              <input id="n-dir" type="text" autocomplete="off" placeholder="Monterrey/Apodaca">
+            </div>
+          </fieldset>
+
+          <fieldset class="grupo">
+            <legend>Operador y cliente</legend>
+            <div class="fila-form">
+              <div class="campo">
+                <label for="n-op">ID del operador</label>
+                <input id="n-op" type="text" list="lista-operadores" autocomplete="off" placeholder="ENV-C001">
+                <datalist id="lista-operadores"></datalist>
+              </div>
+              <div class="campo">
+                <label for="n-cli">ID del cliente <span class="sub">(opcional)</span></label>
+                <input id="n-cli" type="text" autocomplete="off" placeholder="CLI-100">
+              </div>
+            </div>
+            <label class="check"><input type="checkbox" id="n-disp" checked>El operador está disponible</label>
+            <label class="check"><input type="checkbox" id="n-ruta" checked>El operador aceptó la ruta</label>
+          </fieldset>
+
+          <fieldset class="grupo">
+            <legend>Cotización</legend>
+            <div class="fila-form">
+              <div class="campo">
+                <label for="n-cot">ID de la cotización <span class="sub">(opcional)</span></label>
+                <input id="n-cot" type="text" autocomplete="off" placeholder="COT-ENV-O061">
+              </div>
+              <div class="campo">
+                <label for="n-dias">Días desde que se emitió</label>
+                <input id="n-dias" type="number" min="0" value="0">
+                <p class="ayuda">La cotización dura 5 días. Con 6 o más, el sistema la rechaza por vencida.</p>
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="acciones">
+            <button class="btn" type="submit" id="n-enviar">Registrar orden</button>
+            <button class="btn sec" type="button" id="n-ejemplo">Llenar con una carga de alto valor</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Reporte ===== -->
+  <section id="v-reporte" role="tabpanel" aria-labelledby="t-reporte" hidden>
+    <div class="reporte">
+      <div class="rep-cab">
+        <div>
+          <h2>Reporte operativo y financiero</h2>
+          <div class="sub" id="rep-fecha">&nbsp;</div>
+        </div>
+        <button class="btn sec" id="rep-actualizar" type="button">Actualizar reporte</button>
+      </div>
+      <div class="panel"><div style="padding:14px 16px 4px"><h3>Rendimiento por operador</h3></div><div class="tabla-scroll" id="rep-op"></div></div>
+      <div class="panel"><div style="padding:14px 16px 4px"><h3>Estado de cuenta por cliente</h3></div><div class="tabla-scroll" id="rep-cli"></div></div>
+      <div class="panel"><div style="padding:14px 16px 4px"><h3>Incidencias por ruta</h3></div><div class="tabla-scroll" id="rep-ruta"></div></div>
+    </div>
+  </section>
+</main>
+
+<div id="avisos" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+/* ---------- utilidades ---------- */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const dineroEntero = (n) => new Intl.NumberFormat("es-MX", {style:"currency", currency:"MXN", maximumFractionDigits:0}).format(Number(n));
+const dinero = (n) => new Intl.NumberFormat("es-MX", {style:"currency", currency:"MXN"}).format(Number(n));
+const ACENTOS = {"EN TRANSITO":"En tránsito","EN DEVOLUCION":"En devolución"};
+const nombreFase = (f) => ACENTOS[f] || (f.charAt(0) + f.slice(1).toLowerCase());
+const grupoFase = (f) => ({
+  "ENTREGADA":"entregada", "EN DEVOLUCION":"devolucion", "CANCELADA":"mala", "VENCIDA":"mala",
+  "UNIDAD ASIGNADA":"proceso", "RECOLECTADO":"proceso", "EN TRANSITO":"proceso", "LLEGADA A DESTINO":"proceso"
+}[f] || "inicio");
+const badge = (f) => `<span class="badge" data-g="${grupoFase(f)}">${esc(nombreFase(f))}</span>`;
+const fechaHora = (iso) => new Date(iso).toLocaleString("es-MX", {dateStyle:"medium", timeStyle:"medium"});
+const duracion = (s) => s < 60 ? `${s} s` : s < 3600 ? `${Math.floor(s/60)} min ${s%60} s` : `${Math.floor(s/3600)} h ${Math.floor((s%3600)/60)} min`;
+const sinCliente = (c) => (!c || c === "SIN CLIENTE") ? "Sin cliente" : c;
+
+const state = {meta:null, ordenes:[], detalle:null, seleccion:null, fase:"", q:"", ocupado:false};
+
+async function api(ruta, {method="GET", body} = {}) {
+  let res;
+  try {
+    res = await fetch(ruta, {method, headers:{"Content-Type":"application/json"}, body: body ? JSON.stringify(body) : undefined});
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.");
+  }
+  let datos = null;
+  try { datos = await res.json(); } catch {}
+  if (!res.ok) {
+    let msg = datos && datos.error;
+    if (!msg && datos && Array.isArray(datos.detail)) msg = datos.detail.map((d) => d.msg).join(". ");
+    if (!msg && datos && typeof datos.detail === "string") msg = datos.detail;
+    throw new Error(msg || `El servidor respondió con el error ${res.status}.`);
+  }
+  return datos;
+}
+
+function aviso(texto, tipo = "ok") {
+  const el = document.createElement("div");
+  el.className = "aviso-flot" + (tipo === "mal" ? " mal" : "");
+  el.setAttribute("role", tipo === "mal" ? "alert" : "status");
+  el.innerHTML = `<span>${esc(texto)}</span><button type="button" aria-label="Cerrar aviso">×</button>`;
+  const caja = $("#avisos");
+  caja.appendChild(el);
+  while (caja.children.length > 3) caja.firstElementChild.remove();
+  const quitar = () => el.remove();
+  el.querySelector("button").addEventListener("click", quitar);
+  setTimeout(quitar, tipo === "mal" ? 8000 : 4500);
+}
+
+/* ---------- navegación ---------- */
+function irA(vista) {
+  document.querySelectorAll(".pestana").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.vista === vista)));
+  ["ordenes","nueva","reporte"].forEach((v) => { $("#v-" + v).hidden = v !== vista; });
+  if (vista === "reporte") cargarReporte();
+  if (vista === "nueva") prepararFormulario();
+}
+document.querySelectorAll(".pestana").forEach((b) => b.addEventListener("click", () => irA(b.dataset.vista)));
+
+/* ---------- lista de órdenes ---------- */
+async function cargarOrdenes() {
+  const r = await api("/api/ordenes");
+  state.ordenes = r.ordenes;
+  renderChips();
+  renderLista();
+  const dl = $("#lista-operadores");
+  dl.innerHTML = [...new Set(state.ordenes.map((o) => o.operador_id))].sort().map((o) => `<option value="${esc(o)}">`).join("");
+}
+
+function renderChips() {
+  const cuentas = {};
+  state.ordenes.forEach((o) => { cuentas[o.fase] = (cuentas[o.fase] || 0) + 1; });
+  const fases = state.meta.fases.filter((f) => cuentas[f]);
+  const chip = (valor, texto, n) =>
+    `<button type="button" class="chip" data-fase="${esc(valor)}" aria-pressed="${state.fase === valor}">${esc(texto)}<b class="num">${n}</b></button>`;
+  $("#chips").innerHTML = chip("", "Todas", state.ordenes.length) + fases.map((f) => chip(f, nombreFase(f), cuentas[f])).join("");
+}
+
+function renderLista() {
+  const q = state.q.trim().toLowerCase();
+  const filas = state.ordenes.filter((o) =>
+    (!state.fase || o.fase === state.fase) &&
+    (!q || [o.orden_id, o.cliente_id, o.operador_id, o.direccion].join(" ").toLowerCase().includes(q)));
+  if (!filas.length) {
+    $("#lista").innerHTML = `<li class="estado-vacio">${state.ordenes.length ? "Ninguna orden coincide con el filtro. Cambia la búsqueda o elige otra fase." : "Todavía no hay órdenes. Registra la primera en la pestaña Nueva orden."}</li>`;
+    return;
+  }
+  $("#lista").innerHTML = filas.map((o) => `
+    <li><button type="button" class="fila" data-id="${esc(o.orden_id)}" aria-current="${o.orden_id === state.seleccion}">
+      <span class="fila-id">${esc(o.orden_id)}</span>
+      <span class="fila-sub">${esc(sinCliente(o.cliente_id))} · ${esc(o.direccion)}</span>
+      <span class="fila-der">${badge(o.fase)}
+        <span class="fila-valor num">${dinero(o.valor_carga)}</span>
+        ${o.alto_valor ? '<span class="tag-alto">Alto valor</span>' : ""}
+      </span>
+    </button></li>`).join("");
+}
+
+$("#buscar").addEventListener("input", (e) => { state.q = e.target.value; renderLista(); });
+$("#chips").addEventListener("click", (e) => {
+  const b = e.target.closest(".chip"); if (!b) return;
+  state.fase = b.dataset.fase; renderChips(); renderLista();
+});
+$("#lista").addEventListener("click", (e) => {
+  const b = e.target.closest(".fila"); if (b) seleccionar(b.dataset.id);
+});
+
+/* ---------- detalle de una orden ---------- */
+async function seleccionar(id) {
+  try {
+    state.detalle = await api("/api/ordenes/" + encodeURIComponent(id));
+    state.seleccion = id;
+    renderLista();
+    renderDetalle();
+    $("#detalle").classList.add("abierto");
+    $("#detalle").scrollTop = 0;
+  } catch (e) { aviso(e.message, "mal"); }
+}
+
+const CAMION = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M1.5 5.5h12v10h-12zM14.5 8.5h4l3 3.2v3.8h-7z"/><circle cx="6" cy="17" r="2.2" fill="currentColor" stroke="var(--amber)" stroke-width="1.2"/><circle cx="17.5" cy="17" r="2.2" fill="currentColor" stroke="var(--amber)" stroke-width="1.2"/></svg>';
+const PALOMITA = '<svg viewBox="0 0 24 24" aria-hidden="true" style="width:14px;height:14px"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function rutaHtml(d) {
+  const ruta = state.meta.ruta;
+  const i = ruta.indexOf(d.fase);
+  const fuera = i === -1;
+  const pasos = ruta.map((f, k) => {
+    const cls = fuera ? "fuera" : k < i ? "hecho" : k === i ? "actual" : "";
+    const marca = cls === "actual" ? CAMION : cls === "hecho" ? PALOMITA : "";
+    return `<li class="${cls}"${cls === "actual" ? ' aria-current="step"' : ""}><span class="nodo">${marca}</span>${esc(nombreFase(f))}</li>`;
+  }).join("");
+  let nota = "";
+  if (fuera) {
+    const mal = ["CANCELADA", "VENCIDA"].includes(d.fase);
+    nota = `<p class="aviso ${mal ? "mal" : ""}">Esta orden salió de la ruta normal: está en <b>${esc(nombreFase(d.fase))}</b>.</p>`;
+  }
+  return nota + `<ol class="ruta" aria-label="Ruta de la orden">${pasos}</ol>`;
+}
+
+function renderDetalle() {
+  const d = state.detalle;
+  const vacio = $("#detalle-vacio"), cont = $("#detalle-contenido");
+  if (!d) { vacio.hidden = false; cont.hidden = true; return; }
+  vacio.hidden = true; cont.hidden = false;
+
+  const siguientes = d.siguientes.map((f) => {
+    const peligro = f === "CANCELADA" || f === "EN DEVOLUCION";
+    const texto = f === "CANCELADA" ? "Cancelar orden" : f === "EN DEVOLUCION" ? "Mandar a devolución" : "Pasar a " + nombreFase(f);
+    return `<button type="button" class="btn ${peligro ? "peligro" : ""}" data-accion="transicion" data-fase="${esc(f)}">${esc(texto)}</button>`;
+  }).join("");
+  const cerrada = d.siguientes.length === 0;
+
+  const altoValor = d.alto_valor ? `
+    <div class="bloque">
+      <h3>Doble verificación</h3>
+      ${d.autorizada
+        ? `<p class="aviso" style="margin:0">Autorizada con la segunda firma de <b>${esc(d.segunda_firma)}</b>. La orden puede pasar a Entregada.</p>`
+        : `<p class="aviso">Esta carga supera ${dineroEntero(state.meta.umbral_alto_valor)}. Sin segunda firma, el sistema no permite pasarla a Entregada.</p>
+           <form data-form="firma">
+             <div class="campo"><label for="f-firma">Nombre de quien da la segunda firma</label>
+             <input id="f-firma" name="segunda_firma" type="text" autocomplete="off"></div>
+             <button class="btn" type="submit">Registrar segunda firma</button>
+           </form>`}
+    </div>` : "";
+
+  const duraciones = d.historial.map((h, k) => `
+    <tr><td>${esc(nombreFase(h.destino))}</td><td>${esc(fechaHora(h.momento))}</td>
+    <td class="d num">${d.duraciones[k] ? esc(duracion(d.duraciones[k].segundos)) : ""}</td></tr>`).join("");
+
+  cont.innerHTML = `
+    <div class="det-cab">
+      <h2>${esc(d.orden_id)}</h2>${badge(d.fase)}${d.alto_valor ? '<span class="tag-alto">Alto valor</span>' : ""}
+      <button type="button" class="btn sec chico det-cerrar" data-accion="cerrar">Volver a la lista</button>
+    </div>
+    <div class="det-cuerpo">
+      <div class="bloque">
+        <dl class="meta">
+          <div><dt>Destino</dt><dd>${esc(d.direccion)}</dd></div>
+          <div><dt>Valor de la carga</dt><dd class="num">${dinero(d.valor_carga)}</dd></div>
+          <div><dt>Operador</dt><dd>${esc(d.operador_id)}</dd></div>
+          <div><dt>Cliente</dt><dd>${esc(sinCliente(d.cliente_id))}</dd></div>
+          <div><dt>Cotización</dt><dd>${esc(d.cotizacion_id)}<br><span class="sub">Emitida ${esc(fechaHora(d.cotizacion_emitida))}, vigencia de ${d.cotizacion_vigencia_dias} días</span></dd></div>
+        </dl>
+      </div>
+
+      <div class="bloque">
+        <h3>Ruta</h3>
+        ${rutaHtml(d)}
+      </div>
+
+      <div class="bloque">
+        <h3>Cambiar de fase</h3>
+        ${cerrada
+          ? `<p class="sub" style="margin:0">Esta orden ya cerró su ciclo y no admite más cambios de fase.</p>`
+          : `<div class="acciones">${siguientes}</div>`}
+        <details class="plegable" style="margin-top:12px">
+          <summary>Probar una fase que no corresponde</summary>
+          <form data-form="forzar">
+            <p class="ayuda" style="margin:0 0 8px">Sirve para ver cómo la máquina de estados rechaza un salto no permitido.</p>
+            <div class="campo"><label for="f-fase">Fase destino</label>
+            <select id="f-fase" name="nueva_fase">${state.meta.fases.filter((f) => f !== d.fase).map((f) => `<option value="${esc(f)}">${esc(nombreFase(f))}</option>`).join("")}</select></div>
+            <button class="btn sec" type="submit">Intentar el cambio</button>
+          </form>
+        </details>
+      </div>
+
+      ${altoValor}
+
+      <div class="bloque">
+        <h3>Registrar un evento</h3>
+        <details class="plegable">
+          <summary>Reportar incidente</summary>
+          <form data-form="incidente">
+            <div class="campo"><label for="i-desc">¿Qué pasó?</label><textarea id="i-desc" name="descripcion"></textarea></div>
+            <div class="campo"><label for="i-sev">Severidad</label>
+              <select id="i-sev" name="severidad">${state.meta.severidades.map((s) => `<option ${s === "MEDIA" ? "selected" : ""} value="${s}">${s === "CRITICA" ? "Crítica" : s.charAt(0) + s.slice(1).toLowerCase()}</option>`).join("")}</select></div>
+            <button class="btn" type="submit">Reportar incidente</button>
+          </form>
+        </details>
+        <details class="plegable">
+          <summary>Registrar orden de cambio</summary>
+          <form data-form="cambio">
+            <p class="ayuda" style="margin:0 0 8px">Cambio de ruta, destinatario o carga. No se permite en órdenes entregadas o canceladas.</p>
+            <div class="campo"><label for="c-mot">Motivo del cambio</label><textarea id="c-mot" name="motivo"></textarea></div>
+            <button class="btn" type="submit">Registrar cambio</button>
+          </form>
+        </details>
+        <details class="plegable">
+          <summary>Registrar devolución</summary>
+          <form data-form="devolucion">
+            <p class="ayuda" style="margin:0 0 8px">El cliente rechaza la mercancía. Solo se permite en tránsito o en llegada a destino.</p>
+            <div class="campo"><label for="d-mot">Motivo de la devolución</label><textarea id="d-mot" name="motivo"></textarea></div>
+            <button class="btn peligro" type="submit">Registrar devolución</button>
+          </form>
+        </details>
+      </div>
+
+      <div class="bloque">
+        <h3>Historial de la orden</h3>
+        ${d.historial.length
+          ? `<table><thead><tr><th>Fase</th><th>Entró</th><th class="d">Tiempo en la fase</th></tr></thead><tbody>${duraciones}</tbody></table>`
+          : `<p class="sub" style="margin:0">Todavía no hay movimientos de fase registrados en esta sesión.</p>`}
+
+        <h3 style="margin-top:18px">Incidentes (${d.incidentes_detalle.length})</h3>
+        ${d.incidentes_detalle.length ? `<ul class="registro">${d.incidentes_detalle.map((i) =>
+          `<li><b>${esc(i.severidad === "CRITICA" ? "Crítica" : i.severidad.charAt(0) + i.severidad.slice(1).toLowerCase())}</b> · ${esc(i.descripcion)}<br><span class="sub">${esc(i.incidente_id)}${i.resuelto ? " · resuelto" : ""}</span></li>`).join("")}</ul>`
+          : `<p class="sub" style="margin:0">Sin incidentes.</p>`}
+
+        <h3 style="margin-top:18px">Órdenes de cambio (${d.cambios.length})</h3>
+        ${d.cambios.length ? `<ul class="registro">${d.cambios.map((c) =>
+          `<li>${esc(c.motivo)}<br><span class="sub">${esc(c.cambio_id)} · ${esc(fechaHora(c.fecha))}</span></li>`).join("")}</ul>`
+          : `<p class="sub" style="margin:0">Sin cambios registrados.</p>`}
+
+        <h3 style="margin-top:18px">Devoluciones (${d.devoluciones.length})</h3>
+        ${d.devoluciones.length ? `<ul class="registro">${d.devoluciones.map((v) =>
+          `<li>${esc(v.motivo)}<br><span class="sub">${esc(v.devolucion_id)} · ${esc(v.estado.toLowerCase())}</span></li>`).join("")}</ul>`
+          : `<p class="sub" style="margin:0">Sin devoluciones.</p>`}
+      </div>
+    </div>`;
+}
+
+/* acciones dentro del detalle */
+async function ejecutar(ruta, cuerpo) {
+  if (state.ocupado) return;
+  state.ocupado = true;
+  try {
+    const r = await api(ruta, {method:"POST", body:cuerpo});
+    state.detalle = r.orden;
+    aviso(r.mensaje);
+    await cargarOrdenes();
+    renderDetalle();
+  } catch (e) {
+    aviso(e.message, "mal");
+  } finally { state.ocupado = false; }
+}
+const base = () => "/api/ordenes/" + encodeURIComponent(state.seleccion);
+
+$("#detalle").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-accion]"); if (!b) return;
+  if (b.dataset.accion === "cerrar") $("#detalle").classList.remove("abierto");
+  if (b.dataset.accion === "transicion") ejecutar(base() + "/transicion", {nueva_fase: b.dataset.fase});
+});
+$("#detalle").addEventListener("submit", (e) => {
+  const f = e.target.closest("form[data-form]"); if (!f) return;
+  e.preventDefault();
+  const v = Object.fromEntries(new FormData(f).entries());
+  const tipo = f.dataset.form;
+  if (tipo === "forzar") ejecutar(base() + "/transicion", {nueva_fase: v.nueva_fase});
+  if (tipo === "incidente") ejecutar(base() + "/incidentes", {descripcion: v.descripcion, severidad: v.severidad});
+  if (tipo === "cambio") ejecutar(base() + "/cambios", {motivo: v.motivo});
+  if (tipo === "devolucion") ejecutar(base() + "/devolucion", {motivo: v.motivo});
+  if (tipo === "firma") ejecutar(base() + "/doble-verificacion", {segunda_firma: v.segunda_firma});
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") $("#detalle").classList.remove("abierto"); });
+
+/* ---------- nueva orden ---------- */
+function siguienteId() {
+  let max = 0, prefijo = "ENV-O", ancho = 3;
+  state.ordenes.forEach((o) => {
+    const m = /^(.*?)(\d+)$/.exec(o.orden_id);
+    if (m && Number(m[2]) >= max) { max = Number(m[2]); prefijo = m[1]; ancho = m[2].length; }
+  });
+  return prefijo + String(max + 1).padStart(ancho, "0");
+}
+function prepararFormulario() {
+  if (!$("#n-id").value) $("#n-id").value = siguienteId();
+}
+function avisoValor() {
+  const n = Number(String($("#n-valor").value).replace(/,/g, ""));
+  const umbral = Number(state.meta.umbral_alto_valor);
+  $("#n-valor-ayuda").textContent = n > umbral
+    ? `Supera ${dineroEntero(umbral)}: esta carga necesitará segunda firma antes de entregarse.`
+    : `Una carga de más de ${dineroEntero(umbral)} necesita segunda firma para entregarse.`;
+}
+$("#n-valor").addEventListener("input", avisoValor);
+$("#n-ejemplo").addEventListener("click", () => {
+  $("#n-id").value = siguienteId();
+  $("#n-valor").value = "250000";
+  $("#n-dir").value = "Monterrey/Apodaca";
+  $("#n-op").value = "ENV-C001";
+  $("#n-cli").value = "CLI-100";
+  $("#n-disp").checked = true; $("#n-ruta").checked = true; $("#n-dias").value = "0";
+  avisoValor();
+});
+$("#form-nueva").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const err = $("#nueva-error"); err.hidden = true;
+  const boton = $("#n-enviar"); boton.disabled = true;
+  try {
+    const r = await api("/api/ordenes", {method:"POST", body:{
+      orden_id: $("#n-id").value, direccion: $("#n-dir").value, valor_carga: $("#n-valor").value,
+      operador_id: $("#n-op").value, cliente_id: $("#n-cli").value, cotizacion_id: $("#n-cot").value,
+      dias_desde_emision: Number($("#n-dias").value || 0),
+      operador_disponible: $("#n-disp").checked, ruta_aceptada: $("#n-ruta").checked,
+    }});
+    aviso(r.mensaje);
+    $("#form-nueva").reset(); avisoValor();
+    await cargarOrdenes();
+    irA("ordenes");
+    state.fase = ""; state.q = ""; $("#buscar").value = ""; renderChips();
+    await seleccionar(r.orden.orden_id);
+  } catch (ex) {
+    err.textContent = ex.message; err.hidden = false;
+    err.scrollIntoView({block:"nearest"});
+  } finally { boton.disabled = false; }
+});
+
+/* ---------- reporte ---------- */
+const tabla = (cols, filas, vacio) => filas.length
+  ? `<table><thead><tr>${cols.map((c) => `<th class="${c.d ? "d" : ""}">${esc(c.t)}</th>`).join("")}</tr></thead><tbody>${filas.join("")}</tbody></table>`
+  : `<p class="estado-vacio">${esc(vacio)}</p>`;
+
+async function cargarReporte() {
+  try {
+    const r = await api("/api/reporte");
+    $("#rep-fecha").textContent = "Generado el " + fechaHora(r.generado_en);
+    $("#rep-op").innerHTML = tabla(
+      [{t:"Operador"},{t:"Órdenes",d:1},{t:"Entregadas",d:1},{t:"En curso",d:1},{t:"Canceladas",d:1},{t:"Devoluciones",d:1},{t:"Incidentes (críticos)",d:1},{t:"Tasa de entrega",d:1},{t:"Horas promedio",d:1}],
+      r.rendimiento_por_operador.map((o) => `<tr><td>${esc(o.operador_id)}</td><td class="d num">${o.total_ordenes}</td><td class="d num">${o.entregadas}</td>
+        <td class="d num">${o.en_curso}</td><td class="d num">${o.canceladas}</td><td class="d num">${o.en_devolucion}</td>
+        <td class="d num">${o.incidentes} (${o.incidentes_criticos})</td>
+        <td class="d"><span class="barra"><i><b style="width:${Math.min(100, Number(o.tasa_entrega_pct))}%"></b></i><span class="num">${Number(o.tasa_entrega_pct).toFixed(1)}%</span></span></td>
+        <td class="d num">${o.tiempo_promedio_entrega_horas == null ? "—" : Number(o.tiempo_promedio_entrega_horas).toFixed(2)}</td></tr>`),
+      "Todavía no hay órdenes para calcular el rendimiento.");
+    $("#rep-cli").innerHTML = tabla(
+      [{t:"Cliente"},{t:"Órdenes",d:1},{t:"Valor total",d:1},{t:"Entregado",d:1},{t:"En curso",d:1},{t:"Cancelado o devuelto",d:1}],
+      r.estado_cuenta_por_cliente.map((c) => `<tr><td>${esc(sinCliente(c.cliente_id))}</td><td class="d num">${c.total_ordenes}</td>
+        <td class="d num">${dinero(c.valor_total)}</td><td class="d num">${dinero(c.valor_entregado)}</td>
+        <td class="d num">${dinero(c.valor_en_curso)}</td><td class="d num">${dinero(c.valor_cancelado_o_devuelto)}</td></tr>`),
+      "Todavía no hay órdenes para calcular el estado de cuenta.");
+    $("#rep-ruta").innerHTML = tabla(
+      [{t:"Ruta (destino)"},{t:"Incidentes",d:1},{t:"Críticos",d:1}],
+      r.incidencias_por_ruta.map((i) => `<tr><td>${esc(i.ruta)}</td><td class="d num">${i.incidentes_totales}</td><td class="d num">${i.incidentes_criticos}</td></tr>`),
+      "Sin rutas registradas.");
+  } catch (e) { aviso(e.message, "mal"); }
+}
+$("#rep-actualizar").addEventListener("click", cargarReporte);
+
+/* ---------- arranque ---------- */
+(async function iniciar() {
+  $("#lista").innerHTML = `<li class="estado-vacio">Conectando con el servidor… la primera carga puede tardar hasta un minuto.</li>`;
+  try {
+    state.meta = await api("/api/meta");
+    await cargarOrdenes();
+  } catch (e) {
+    $("#lista").innerHTML = `<li class="estado-vacio">${esc(e.message)}</li>`;
+  }
+})();
+</script>
+</body>
+</html>
